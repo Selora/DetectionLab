@@ -1,5 +1,48 @@
 {
   "builders": [
+      {
+      "type": "qemu",
+      "vm_name":"windows_2016",
+      "communicator": "winrm",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "headless": true,
+      "boot_wait": "6m",
+      "boot_command": "",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "4h",
+      "shutdown_timeout": "2h",
+      "shutdown_command": "a:/sysprep.bat",
+      "accelerator": "kvm",
+      "disk_size": "{{user `disk_size`}}",
+      "output_directory": "{{ user `packer_build_dir`}}",
+      "qemuargs": [
+        [ "-m", "2048"],
+        [ "-smp", "2"],
+        [ "-drive", "file={{ user `virtio_win_iso` }},media=cdrom,index=3" ],
+        [ "-drive", "file={{ user `packer_build_dir`}}/{{ .Name }},if=virtio,cache=writeback,discard=ignore,format=qcow2,index=1" ]
+        ],
+      "floppy_files": [
+        "{{user `autounattend_virtio`}}",
+        "./floppy/WindowsPowershell.lnk",
+        "./floppy/PinTo10.exe",
+        "./scripts/unattend.xml",
+        "./scripts/sysprep.bat",
+        "./scripts/fixnetwork.ps1",
+        "./scripts/rearm-windows.ps1",
+        "./scripts/disable-screensaver.ps1",
+        "./scripts/disable-winrm.ps1",
+        "./scripts/enable-winrm.ps1",
+        "./scripts/microsoft-updates.bat",
+        "./scripts/win-updates.ps1"
+      ]
+    },
+
+    
+    
+    
     {
       "vm_name":"WindowsServer2016",
       "type": "vmware-iso",
